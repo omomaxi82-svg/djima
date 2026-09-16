@@ -1,0 +1,20 @@
+{
+  "port": 4590,
+  "inputDir": "./data/watch/input",
+  "outputDir": "./data/watch/output",
+  "quarantineDir": "./data/watch/output/_a_verifier",
+  "concurrency": 2,
+  "autoTranscodeOnArrival": false,
+  "defaultPresetId": "xdcam_hd422_50",
+  "blackdetect": {
+    "enabled": true,
+    "minDurationSec": 2,
+    "pixelThreshold": 0.1,
+    "maxAllowedBlackRatio": 0.05
+  },
+  "auth": {
+    "enabled": false,
+    "username": "srtb",
+    "password": "change-me"
+  }
+}

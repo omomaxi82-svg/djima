@@ -1,0 +1,8 @@
+node_modules/
+data/config.json
+data/presets.json
+data/jobs.json
+data/watch/
+npm-debug.log*
+*.log
+.DS_Store

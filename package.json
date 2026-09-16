@@ -1,0 +1,20 @@
+{
+  "name": "djima",
+  "version": "1.0.0",
+  "description": "Djima - Correction et transcodage de fichiers pour playout broadcast (SRTB), base sur FFmpeg.",
+  "main": "src/server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "chokidar": "^3.6.0",
+    "express": "^4.19.2",
+    "socket.io": "^4.7.5"
+  }
+}

@@ -1,0 +1,16 @@
+version: "3.8"
+
+services:
+  djima:
+    build: .
+    container_name: djima
+    restart: unless-stopped
+    ports:
+      - "4590:4590"
+    volumes:
+      # Etat de l'application (config, presets, historique des jobs)
+      - ./data-runtime:/app/data
+      # Montez ici vos partages reseau reels d'entree/sortie utilises par Cynergie,
+      # puis pointez inputDir/outputDir dessus depuis les Reglages de l'interface.
+      - /mnt/cynergie/a_ingerer:/mnt/entree
+      - /mnt/cynergie/ingest:/mnt/sortie

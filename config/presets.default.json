@@ -1,0 +1,126 @@
+[
+  {
+    "id": "xdcam_hd422_50",
+    "label": "XDCAM HD422 50 Mb/s (MXF 1080i25)",
+    "category": "Cynergie / Diffusion",
+    "extension": "mxf",
+    "description": "Format d'ingest broadcast standard (MPEG-2 4:2:2, MXF OP1a, PCM 48kHz). A valider avec le cahier des charges d'ingest Cynergie de la regie.",
+    "recommendedForCynergie": true,
+    "args": [
+      "-c:v", "mpeg2video",
+      "-pix_fmt", "yuv422p",
+      "-b:v", "50M", "-minrate", "50M", "-maxrate", "50M", "-bufsize", "17825792",
+      "-g", "12", "-bf", "2",
+      "-c:a", "pcm_s16le", "-ar", "48000", "-ac", "2",
+      "-f", "mxf"
+    ]
+  },
+  {
+    "id": "xdcam_imx50",
+    "label": "MPEG IMX 50 Mb/s (MXF, SD)",
+    "category": "Cynergie / Diffusion",
+    "extension": "mxf",
+    "description": "Format d'archive/diffusion SD historique, encore accepte par certains automates de playout.",
+    "recommendedForCynergie": true,
+    "args": [
+      "-c:v", "mpeg2video",
+      "-pix_fmt", "yuv422p",
+      "-b:v", "50M", "-minrate", "50M", "-maxrate", "50M", "-bufsize", "17825792",
+      "-g", "1", "-intra",
+      "-c:a", "pcm_s16le", "-ar", "48000", "-ac", "2",
+      "-f", "mxf"
+    ]
+  },
+  {
+    "id": "dnxhd_120",
+    "label": "Avid DNxHD 120 Mb/s (MXF 1080i25)",
+    "category": "Cynergie / Diffusion",
+    "extension": "mxf",
+    "description": "Format intermediaire broadcast tres compatible, souvent accepte en ingest par les automates de type Cynergie.",
+    "recommendedForCynergie": true,
+    "args": [
+      "-c:v", "dnxhd",
+      "-b:v", "120M",
+      "-pix_fmt", "yuv422p",
+      "-c:a", "pcm_s16le", "-ar", "48000", "-ac", "2",
+      "-f", "mxf"
+    ]
+  },
+  {
+    "id": "h264_high_mp4",
+    "label": "H.264 High Profile 4:2:0 (MP4 1080p)",
+    "category": "Cynergie / Diffusion",
+    "extension": "mp4",
+    "description": "Compatible avec la plupart des playout modernes acceptant du MP4/MOV en ingest. Bon compromis qualite/poids.",
+    "recommendedForCynergie": true,
+    "args": [
+      "-c:v", "libx264", "-profile:v", "high", "-preset", "slow",
+      "-pix_fmt", "yuv420p",
+      "-b:v", "15M", "-maxrate", "15M", "-bufsize", "30M",
+      "-g", "25", "-bf", "2",
+      "-c:a", "aac", "-b:a", "192k", "-ar", "48000", "-ac", "2",
+      "-movflags", "+faststart",
+      "-f", "mp4"
+    ]
+  },
+  {
+    "id": "mpeg2_ts_dvb",
+    "label": "MPEG-2 TS (flux DVB classique)",
+    "category": "Cynergie / Diffusion",
+    "extension": "ts",
+    "description": "Conteneur de transport utilise par certaines chaines d'ingest DVB/diffusion directe.",
+    "recommendedForCynergie": true,
+    "args": [
+      "-c:v", "mpeg2video", "-pix_fmt", "yuv420p",
+      "-b:v", "15M", "-maxrate", "15M", "-bufsize", "30M",
+      "-g", "12", "-bf", "2",
+      "-c:a", "mp2", "-b:a", "192k", "-ar", "48000", "-ac", "2",
+      "-f", "mpegts"
+    ]
+  },
+  {
+    "id": "prores_422",
+    "label": "Apple ProRes 422 (MOV)",
+    "category": "Post-production",
+    "extension": "mov",
+    "description": "Format intermediaire de montage haute qualite, non destine a l'ingest direct playout.",
+    "recommendedForCynergie": false,
+    "args": [
+      "-c:v", "prores_ks", "-profile:v", "2",
+      "-pix_fmt", "yuv422p10le",
+      "-c:a", "pcm_s16le", "-ar", "48000", "-ac", "2",
+      "-f", "mov"
+    ]
+  },
+  {
+    "id": "h265_archive",
+    "label": "H.265 / HEVC (archive, gain de place)",
+    "category": "Archivage",
+    "extension": "mp4",
+    "description": "Reduit fortement le poids des fichiers pour l'archivage. Non recommande pour l'ingest playout direct (decodage plus lourd).",
+    "recommendedForCynergie": false,
+    "args": [
+      "-c:v", "libx265", "-preset", "medium", "-crf", "18",
+      "-pix_fmt", "yuv420p10le",
+      "-c:a", "aac", "-b:a", "192k", "-ar", "48000", "-ac", "2",
+      "-tag:v", "hvc1",
+      "-f", "mp4"
+    ]
+  },
+  {
+    "id": "proxy_preview",
+    "label": "Proxy web H.264 basse def (previsualisation)",
+    "category": "Autres",
+    "extension": "mp4",
+    "description": "Fichier leger pour verification rapide dans un navigateur, pas pour la diffusion.",
+    "recommendedForCynergie": false,
+    "args": [
+      "-c:v", "libx264", "-preset", "veryfast", "-crf", "28",
+      "-vf", "scale=-2:480",
+      "-pix_fmt", "yuv420p",
+      "-c:a", "aac", "-b:a", "128k", "-ar", "48000", "-ac", "2",
+      "-movflags", "+faststart",
+      "-f", "mp4"
+    ]
+  }
+]
