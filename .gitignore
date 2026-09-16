@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+config.yaml
+watch/in/*
+watch/out/*
+watch/archive/*
+!watch/in/.gitkeep
+!watch/out/.gitkeep
+!watch/archive/.gitkeep

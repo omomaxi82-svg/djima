@@ -1,0 +1,27 @@
+# Configuration de l'atelier de transcodage FFmpeg
+# Copiez ce fichier vers config.yaml et adaptez les chemins à votre installation.
+
+# Dossier surveillé où les opérateurs déposent les fichiers à corriger/transcoder
+input_dir: ./watch/in
+
+# Dossier où sont écrits les fichiers transcodés, prêts à être injectés dans Cynergie
+output_dir: ./watch/out
+
+# Dossier optionnel où les fichiers sources sont déplacés après un transcodage réussi
+# (laisser vide pour ne rien déplacer)
+archive_dir: ./watch/archive
+
+# Binaires ffmpeg / ffprobe (chemin complet si non présents dans le PATH)
+ffmpeg_bin: ffmpeg
+ffprobe_bin: ffprobe
+
+# Nombre de transcodages exécutés en parallèle
+# A adapter au nombre de coeurs CPU disponibles sur le serveur.
+max_parallel_jobs: 1
+
+# Port d'écoute de l'interface web
+host: 0.0.0.0
+port: 8090
+
+# Taille max. d'un fichier envoyé via l'upload web (Mo)
+max_upload_mb: 20000

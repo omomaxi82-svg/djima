@@ -1,0 +1,14 @@
+services:
+  transcoder:
+    build: .
+    image: srtb-ffmpeg-transcoder:latest
+    container_name: srtb-ffmpeg-transcoder
+    restart: unless-stopped
+    ports:
+      - "8090:8090"
+    environment:
+      MAX_PARALLEL_JOBS: "1"
+    volumes:
+      - ./watch/in:/data/in
+      - ./watch/out:/data/out
+      - ./watch/archive:/data/archive
