@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Atelier de transcodage FFmpeg — SRTB</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">
+    <span class="brand-mark">FF</span>
+    <div>
+      <h1>Atelier de transcodage FFmpeg</h1>
+      <p class="subtitle">SRTB — Correction &amp; conformité des fichiers avant ingest Cynergie</p>
+    </div>
+  </div>
+  <div class="topbar-meta">
+    <div class="meta-item">
+      <span class="meta-label">Entrée</span>
+      <span class="meta-value" id="meta-input-dir">…</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-label">Sortie</span>
+      <span class="meta-value" id="meta-output-dir">…</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-label">Jobs parallèles</span>
+      <span class="meta-value" id="meta-parallel">…</span>
+    </div>
+  </div>
+</header>
+
+<main class="layout">
+
+  <section class="panel panel-files">
+    <div class="panel-header">
+      <h2>Dossier d'entrée</h2>
+      <button class="btn btn-ghost" id="refresh-files">Actualiser</button>
+    </div>
+
+    <div class="dropzone" id="dropzone">
+      <p><strong>Glissez-déposez</strong> vos fichiers ici, ou</p>
+      <label class="btn btn-secondary">
+        Choisir des fichiers
+        <input type="file" id="file-input" multiple hidden>
+      </label>
+    </div>
+
+    <div class="file-list" id="file-list">
+      <p class="empty-hint">Aucun fichier dans le dossier d'entrée.</p>
+    </div>
+  </section>
+
+  <section class="panel panel-launch">
+    <div class="panel-header">
+      <h2>Profil de sortie</h2>
+    </div>
+    <div id="profile-groups" class="profile-groups"></div>
+
+    <div class="panel-header options-header">
+      <h2>Corrections &amp; options</h2>
+    </div>
+    <div class="options-grid">
+      <label class="option-card">
+        <input type="checkbox" id="opt-normalize" checked>
+        <div>
+          <strong>Normaliser la loudness (EBU R128, -23 LUFS)</strong>
+          <span>Corrige les niveaux audio trop bas/forts (2 passes).</span>
+        </div>
+      </label>
+      <label class="option-card">
+        <input type="checkbox" id="opt-deinterlace">
+        <div>
+          <strong>Désentrelacer (yadif)</strong>
+          <span>À activer si la source est entrelacée alors qu'elle ne devrait pas l'être.</span>
+        </div>
+      </label>
+      <label class="option-card">
+        <input type="checkbox" id="opt-trim-black">
+        <div>
+          <strong>Rogner les noirs prolongés en tête/fin</strong>
+          <span>Détecte et retire un noir anormal en début ou fin de fichier.</span>
+        </div>
+      </label>
+      <label class="option-card">
+        <input type="checkbox" id="opt-reset-tc">
+        <div>
+          <strong>Réinitialiser le timecode (00:00:00:00)</strong>
+          <span>Utile quand le TC source est incohérent pour Cynergie.</span>
+        </div>
+      </label>
+    </div>
+
+    <button class="btn btn-primary btn-launch" id="launch-btn" disabled>
+      Transcoder la sélection (<span id="selection-count">0</span> fichier·s)
+    </button>
+    <p class="hint">Sélectionnez un ou plusieurs fichiers dans la colonne de gauche, choisissez un profil, puis lancez.</p>
+  </section>
+
+  <section class="panel panel-jobs">
+    <div class="panel-header">
+      <h2>Suivi des transcodages</h2>
+    </div>
+    <div class="job-list" id="job-list">
+      <p class="empty-hint">Aucun job pour le moment.</p>
+    </div>
+  </section>
+
+  <section class="panel panel-outputs">
+    <div class="panel-header">
+      <h2>Fichiers de sortie (prêts pour Cynergie)</h2>
+      <button class="btn btn-ghost" id="refresh-outputs">Actualiser</button>
+    </div>
+    <div class="file-list" id="output-list">
+      <p class="empty-hint">Aucun fichier généré pour le moment.</p>
+    </div>
+  </section>
+
+</main>
+
+<template id="tpl-file-row">
+  <div class="file-row">
+    <input type="checkbox" class="file-select">
+    <div class="file-main">
+      <div class="file-name"></div>
+      <div class="file-meta"></div>
+      <div class="file-analysis"></div>
+    </div>
+    <div class="file-actions">
+      <span class="badge badge-neutral verdict">non analysé</span>
+      <button class="btn btn-ghost btn-analyze">Analyser</button>
+      <button class="btn btn-ghost btn-analyze-black" title="Analyse approfondie avec détection des noirs">+ noirs</button>
+      <button class="btn btn-ghost btn-danger btn-delete">Suppr.</button>
+    </div>
+  </div>
+</template>
+
+<template id="tpl-output-row">
+  <div class="file-row">
+    <div class="file-main">
+      <div class="file-name"></div>
+      <div class="file-meta"></div>
+    </div>
+    <div class="file-actions">
+      <a class="btn btn-ghost btn-download" download>Télécharger</a>
+      <button class="btn btn-ghost btn-danger btn-delete">Suppr.</button>
+    </div>
+  </div>
+</template>
+
+<template id="tpl-job-card">
+  <div class="job-card">
+    <div class="job-card-header">
+      <div>
+        <div class="job-filename"></div>
+        <div class="job-profile"></div>
+      </div>
+      <span class="badge status"></span>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill"></div>
+    </div>
+    <div class="job-footer">
+      <span class="job-phase"></span>
+      <span class="job-speed"></span>
+    </div>
+    <div class="job-error"></div>
+    <div class="job-result"></div>
+    <div class="job-actions">
+      <button class="btn btn-ghost btn-cancel">Annuler</button>
+    </div>
+  </div>
+</template>
+
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>

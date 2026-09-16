@@ -1,0 +1,23 @@
+# Exemple de service systemd pour un déploiement sans Docker,
+# sur le serveur de diffusion ou une machine dédiée.
+#
+# Installation :
+#   sudo cp deploy/broadcast-transcoder.service /etc/systemd/system/
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable --now broadcast-transcoder
+
+[Unit]
+Description=Atelier de transcodage FFmpeg (SRTB - ingest Cynergie)
+After=network.target
+
+[Service]
+Type=simple
+User=transcoder
+Group=transcoder
+WorkingDirectory=/opt/broadcast-transcoder
+ExecStart=/opt/broadcast-transcoder/venv/bin/python run.py --config /opt/broadcast-transcoder/config.yaml
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
